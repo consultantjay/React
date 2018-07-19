@@ -1,17 +1,17 @@
 # React
 React In Action 
 -
-# What is React? 
+#What is React? 
 -
   - A libarary for user interfaces  
   - Created at Facebook and instagram  
   - React Native for mobile  
 ----------------------------------------------------------------
-# React makes udate in the DOM fasted using DOM Diffing 
-\ - Compares rendered content with the new UI changes \
-  - Makes only the minimal changes necessary \
-  - Compares JavaScript Objects \
-  - Is faster than writing to or reacing from DOM \
+#React makes udate in the DOM fasted using DOM Diffing 
+\ - Compares rendered content with the new UI changes
+  - Makes only the minimal changes necessary 
+  - Compares JavaScript Objects
+  - Is faster than writing to or reacing from DOM 
 ###-----------------------------------------------------------------
 # What is webpack?
 
