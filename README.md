@@ -100,3 +100,366 @@ In HTML, form elements such as <input>, <textarea>, and <select> typically maint
 # Ref
 In most cases, we recommend using controlled components to implement forms. In a controlled component, form data is handled by a React component. The alternative is uncontrolled components, where form data is handled by the DOM itself.
 To write an uncontrolled component, instead of writing an event handler for every state update, you can use a ref to get form values from the DOM.
+
+# Props in Initial State
+From docs:
+> Using props to generate state in getInitialState often leads to duplication of “source of truth”, i.e. where the real data is.
+> This is because getInitialState is only invoked when the component is first created.
+
+The danger is that if the props on the component are changed without the component being ‘refreshed’,
+the new prop value will never be displayed because the constructor function (or getInitialState) will never update the current state of the component.
+The initialization of state from props only runs when the component is first created.
+
+#### Bad
+```javascript
+class SampleComponent extends Component {
+  // constructor function (or getInitialState)
+  constructor(props) {
+    super(props);
+    this.state = {
+      flag: false,
+      inputVal: props.inputValue
+    };
+  }
+
+  render() {
+    return <div>{this.state.inputVal && <AnotherComponent/>}</div>
+  }
+}
+```
+#### Good
+```javascript
+class SampleComponent extends Component {
+  // constructor function (or getInitialState)
+  constructor(props) {
+    super(props);
+    this.state = {
+      flag: false
+    };
+  }
+
+  render() {
+    return <div>{this.props.inputValue && <AnotherComponent/>}</div>
+  }
+}
+```
+ 
+
+##### findDOMNode(this)
+
+###### Before:
+```javascript
+class MyComponent extends Component {
+  componentDidMount() {
+    findDOMNode(this).scrollIntoView();
+  }
+
+  render() {
+    return <div />
+  }
+}
+```
+###### After
+```javascript
+class MyComponent extends Component {
+  componentDidMount() {
+    this.node.scrollIntoView();
+  }
+
+  render() {
+    return <div ref={node => this.node = node}/>
+  }
+}
+```
+##### findDOMNode(stringDOMRef)
+###### Before
+```javascript
+class MyComponent extends Component {
+  componentDidMount() {
+    findDOMNode(this.refs.something).scrollIntoView();
+  }
+
+  render() {
+    return (
+      <div>
+        <div ref='something'/>
+      </div>
+    )
+  }
+}
+```
+###### After
+```javascript
+class MyComponent extends Component {
+  componentDidMount() {
+    this.something.scrollIntoView();
+  }
+
+  render() {
+    return (
+      <div>
+        <div ref={node => this.something = node}/>
+      </div>
+    )
+  }
+}
+```
+##### findDOMNode(childComponentStringRef)
+###### Before:
+```javascript
+class Field extends Component {
+  render() {
+    return <input type='text'/>
+  }
+}
+
+class MyComponent extends Component {
+  componentDidMount() {
+    findDOMNode(this.refs.myInput).focus();
+  }
+
+  render() {
+    return (
+      <div>
+        Hello,
+        <Field ref='myInput'/>
+      </div>
+    )
+  }
+}
+```
+###### After
+```javascript
+class Field extends Component {
+  render() {
+    return (
+      <input type='text' ref={this.props.inputRef}/>
+    )
+  }
+}
+
+class MyComponent extends Component {
+  componentDidMount() {
+    this.inputNode.focus();
+  }
+
+  render() {
+    return (
+      <div>
+        Hello,
+        <Field inputRef={node => this.inputNode = node}/>
+      </div>
+    )
+  }
+}
+```
+# Use Higher order components over Mixins
+
+#### Simple Example
+```javascript
+// With Mixin
+var WithLink = React.createClass({
+  mixins: [React.addons.LinkedStateMixin],
+  getInitialState: function () {
+    return {message: 'Hello!'};
+  },
+  render: function () {
+    return <input type="text" valueLink={this.linkState('message')}/>;
+  }
+});
+
+// Move logic to a HOC
+var WithLink = React.createClass({
+  getInitialState: function () {
+    return {message: 'Hello!'};
+  },
+  render: function () {
+    return <input type="text" valueLink={LinkState(this,'message')}/>;
+  }
+});
+```
+
+#### Detailed Example
+
+```javascript
+// With Mixin
+var CarDataMixin = {
+  componentDidMount: {
+    // fetch car data and
+    // call this.setState({carData: fetchedData}),
+    // once data has been (asynchronously) fetched
+  }
+};
+
+var FirstView = React.createClass({
+  mixins: [CarDataMixin],
+  render: function () {
+    return (
+      <div>
+        <AvgSellingPricesByYear country="US" dataset={this.state.carData}/>
+        <AvgSellingPricesByYear country="UK" dataset={this.state.carData}/>
+        <AvgSellingPricesByYear country="FI" dataset={this.state.carData}/>
+      </div>
+    )
+  }
+});
+
+// With HOC
+var bindToCarData = function (Component) {
+  return React.createClass({
+    componentDidMount: {
+      // fetch car data and
+      // call this.setState({carData: fetchedData}),
+      // once data has been (asynchronously) fetched
+    },
+
+    render: function () {
+      return <Component carData={ this.state.carData }/>
+    }
+  });
+};
+
+// Then wrap your component when you define it.
+var FirstView = bindToCarData(React.createClass({
+  render: function () {
+    return (
+      <div>
+        <AvgSellingPricesByYear country="US" dataset={this.props.carData}/>
+        <AvgSellingPricesByYear country="UK" dataset={this.props.carData}/>
+        <AvgSellingPricesByYear country="FI" dataset={this.props.carData}/>
+      </div>
+    )
+  }
+}));
+```
+# setState() in componentWillMount()
+Avoid async initialization in ``componentWillMount()``
+
+``componentWillMount()`` is invoked immediately before mounting occurs.
+It is called before ``render()``, therefore setting state in this method will not trigger a re-render.
+Avoid introducing any side-effects or subscriptions in this method.
+
+
+Make async calls for component initialization in ``componentDidMount`` instead of ``componentWillMount``
+```javascript
+function componentDidMount() {
+  axios.get(`api/messages`)
+    .then((result) => {
+      const messages = result.data
+      console.log("COMPONENT WILL Mount messages : ", messages);
+      this.setState({
+        messages: [...messages.content]
+      })
+    })
+}
+```
+# Mutating State without setState()
+- Causes state changes without making component re-render.
+- Whenever setState gets called in future, the mutated state gets applied.
+
+#### Bad
+``` javascript
+class SampleComponent extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      items: ['foo', 'bar']
+    };
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    // BAD: We mutate state here
+    this.state.items.push('lorem');
+
+    this.setState({
+      items: this.state.items
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        {this.state.items.length}
+        <button onClick={this.handleClick}>+</button>
+      </div>
+    )
+  }
+}
+```
+
+#### Good
+``` javascript
+class SampleComponent extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      items: ['foo', 'bar']
+    };
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    // We update using setState() - concat return new array after appending new item.
+    this.setState({
+      items: this.state.items.concat('lorem')
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        {this.state.items.length}
+        <button onClick={this.handleClick}>+</button>
+      </div>
+    )
+  }
+}
+```
+# Using indexes as keys
+Keys should be stable, predictable, and unique so that React can keep track of elements.
+
+#### Bad
+In this snippet each element's key will be based on ordering, rather than tied to the data that is being represented. This limits the optimizations that React can do.
+```javascript
+{todos.map((todo, index) =>
+  <Todo
+    {...todo}
+    key={index}
+  />
+)}
+```
+
+#### Good
+Assuming `todo.id` is unique to this list and stable, React would be able to reorder elements without needing to reevaluate them as much.
+```javascript
+{todos.map((todo) =>
+  <Todo {...todo}
+    key={todo.id} />
+)}
+```
+# Spreading props on DOM elements
+When we spread props we run into the risk of adding unknown HTML attributes, which is a bad practice.
+
+#### Bad
+This will try to add the unknown HTML attribute `flag` to the DOM element.
+```javascript
+const Sample = () => (<Spread flag={true} className="content"/>);
+const Spread = (props) => (<div {...props}>Test</div>);
+```
+#### Good
+By creating props specifically for DOM attribute, we can safely spread.
+```javascript
+const Sample = () => (<Spread flag={true} domProps={{className: "content"}}/>);
+const Spread = (props) => (<div {...props.domProps}>Test</div>);
+```
+
+Or alternatively we can use prop destructuring with `...rest`:
+```javascript
+const Sample = () => (<Spread flag={true} className="content"/>);
+const Spread = ({ flag, ...domProps }) => (<div {...domProps}>Test</div>);
+```
