@@ -8,21 +8,21 @@ React In Action
   - React Native for mobile  
 ----------------------------------------------------------------
 #React makes udate in the DOM fasted using DOM Diffing 
-\ - Compares rendered content with the new UI changes
+  - Compares rendered content with the new UI changes
   - Makes only the minimal changes necessary 
   - Compares JavaScript Objects
   - Is faster than writing to or reacing from DOM 
 ###-----------------------------------------------------------------
 # What is webpack?
 
-1) Is a module bundler
-2) Creates static files
-3) Automates processes
+- 1) Is a module bundler
+- 2) Creates static files
+- 3) Automates processes
 
-webpack is a static module bundler for modern JavaScript applications. When webpack processes your application, it internally builds a dependency graph which maps every module your project needs and generates one or more bundles.
+- webpack is a static module bundler for modern JavaScript applications. When webpack processes your application, it internally builds a   dependency graph which maps every module your project needs and generates one or more bundles.
 
-webpack only understands JavaScript files. 
-To get started you only need to understand its Core Concepts:
+- webpack only understands JavaScript files. 
+  To get started you only need to understand its Core Concepts:
 	Entry -> 
 			An entry point indicates which module webpack should use to begin building out its internal dependency graph, 
 			webpack will figure out which other modules and libraries that entry point depends on (directly and indirectly).
@@ -42,8 +42,8 @@ Hot Module Replacement
 		Tweak styling faster 
 			-- almost comparable to changing styles in the browser's debugger.
 -----------------------------------------------------------------
-Introduction to JSX?
-JSX is a preprocessor step that adds XML syntax to JavaScript. 
+# Introduction to JSX?
+- JSX is a preprocessor step that adds XML syntax to JavaScript. 
 You can definitely use React without JSX but JSX makes React a lot more elegant.
 Just like XML, JSX tags have a tag name, attributes, and children. 
 If an attribute value is enclosed in quotes, the value is a string. Otherwise, 
