@@ -101,6 +101,8 @@ In HTML, form elements such as <input>, <textarea>, and <select> typically maint
 In most cases, we recommend using controlled components to implement forms. In a controlled component, form data is handled by a React component. The alternative is uncontrolled components, where form data is handled by the DOM itself.
 To write an uncontrolled component, instead of writing an event handler for every state update, you can use a ref to get form values from the DOM.
 
+----------------------------------------------------------------
+
 # Props in Initial State
 From docs:
 > Using props to generate state in getInitialState often leads to duplication of “source of truth”, i.e. where the real data is.
@@ -144,6 +146,8 @@ class SampleComponent extends Component {
 }
 ```
  
+
+----------------------------------------------------------------
 
 ##### findDOMNode(this)
 
@@ -204,6 +208,9 @@ class MyComponent extends Component {
   }
 }
 ```
+
+----------------------------------------------------------------
+
 ##### findDOMNode(childComponentStringRef)
 ###### Before:
 ```javascript
@@ -253,6 +260,9 @@ class MyComponent extends Component {
   }
 }
 ```
+
+----------------------------------------------------------------
+
 # Use Higher order components over Mixins
 
 #### Simple Example
@@ -278,6 +288,8 @@ var WithLink = React.createClass({
   }
 });
 ```
+
+----------------------------------------------------------------
 
 #### Detailed Example
 
@@ -332,6 +344,9 @@ var FirstView = bindToCarData(React.createClass({
   }
 }));
 ```
+
+----------------------------------------------------------------
+
 # setState() in componentWillMount()
 Avoid async initialization in ``componentWillMount()``
 
@@ -420,6 +435,9 @@ class SampleComponent extends Component {
   }
 }
 ```
+
+----------------------------------------------------------------
+
 # Using indexes as keys
 Keys should be stable, predictable, and unique so that React can keep track of elements.
 
@@ -442,6 +460,9 @@ Assuming `todo.id` is unique to this list and stable, React would be able to reo
     key={todo.id} />
 )}
 ```
+
+----------------------------------------------------------------
+
 # Spreading props on DOM elements
 When we spread props we run into the risk of adding unknown HTML attributes, which is a bad practice.
 
