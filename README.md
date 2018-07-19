@@ -73,11 +73,11 @@ you need to be able to trigger changes to your underlying data model. React make
 key here is DRY: Don’t Repeat Yourself
 Step 4: Identify Where Your State Should Live
 Step 5: Add Inverse Data Flow
--------------------------------------------------
-----------------------------------------------------
+--------------------------------------------------------------
 React mixins
 Components are React's preferred reuse mechanism, but it's not the only one. Sometimes different components share the same functions. It may be awkward to wrap these cross-cutting concerns in a higher order component, or the common code may need access to a component's state. In these scenarios, React mixins are useful.
 -------------------------------------------------------------
+
 HTML form elements work a little bit differently from other DOM elements in React, because form elements naturally keep some internal state. For example, this form in plain HTML accepts a single name:
 <form>
   <label>
@@ -88,7 +88,9 @@ HTML form elements work a little bit differently from other DOM elements in Reac
 </form>
 This form has the default HTML form behavior of browsing to a new page when the user submits the form. If you want this behavior in React, it just works. But in most cases, it’s convenient to have a JavaScript function that handles the submission of the form and has access to the data that the user entered into the form. The standard way to achieve this is with a technique called “controlled components”.
 In HTML, form elements such as <input>, <textarea>, and <select> typically maintain their own state and update it based on user input. In React, mutable state is typically kept in the state property of components, and only updated with setState().
+	
 ----------------------------------------------------------
+
 Ref
 In most cases, we recommend using controlled components to implement forms. In a controlled component, form data is handled by a React component. The alternative is uncontrolled components, where form data is handled by the DOM itself.
 To write an uncontrolled component, instead of writing an event handler for every state update, you can use a ref to get form values from the DOM.
